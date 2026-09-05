@@ -1,3 +1,10 @@
+// jsonwebtoken's signing dependency still imports SlowBuffer, which Node.js 25
+// no longer exports. Buffer is its compatible replacement.
+const nodeBuffer = require('buffer');
+if (!nodeBuffer.SlowBuffer) {
+    nodeBuffer.SlowBuffer = nodeBuffer.Buffer;
+}
+
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
@@ -7,7 +14,7 @@ const appointmentRoutes = require('./routes/appointments');
 const userRoutes = require('./routes/users');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number.parseInt(process.env.PORT, 10) || 5000;
 
 // CORS configuration
 const corsOptions = {
@@ -38,7 +45,7 @@ app.use(express.json());
 
 // Test route
 app.get('/test', (req, res) => {
-    res.json({ message: 'Server is running', port: PORT });
+    res.json({ message: 'Server is running', port: req.socket.localPort });
 });
 
 // Routes
@@ -71,13 +78,14 @@ const startServer = async () => {
         console.log('Database connection established successfully.');
 
         const server = app.listen(PORT, () => {
+            const activePort = server.address().port;
             console.log('\n=== Server Started ===');
-            console.log(`Server is running on http://localhost:${PORT}`);
+            console.log(`Server is running on http://localhost:${activePort}`);
             console.log('Available routes:');
-            console.log(`- GET http://localhost:${PORT}/test`);
-            console.log(`- GET http://localhost:${PORT}/api/users/doctors`);
-            console.log(`- GET http://localhost:${PORT}/api/appointments/my-appointments`);
-            console.log(`- GET http://localhost:${PORT}/api/health-records/my-records`);
+            console.log(`- GET http://localhost:${activePort}/test`);
+            console.log(`- GET http://localhost:${activePort}/api/users/doctors`);
+            console.log(`- GET http://localhost:${activePort}/api/appointments/my-appointments`);
+            console.log(`- GET http://localhost:${activePort}/api/health-records/my-records`);
             console.log('=====================\n');
         });
 
@@ -129,4 +137,4 @@ const startServer = async () => {
     }
 };
 
-startServer(); 
+startServer();

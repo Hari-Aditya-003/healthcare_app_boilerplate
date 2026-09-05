@@ -23,6 +23,7 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 const DoctorDashboard = () => {
   const [appointments, setAppointments] = useState([]);
@@ -46,10 +47,10 @@ const DoctorDashboard = () => {
       console.log('\n=== Fetching Doctor Dashboard Data ===');
       
       const [appointmentsRes, recordsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/appointments/doctor-appointments', {
+        axios.get(`${API_URL}/api/appointments/doctor-appointments`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:5000/api/health-records/doctor-records', {
+        axios.get(`${API_URL}/api/health-records/doctor-records`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -89,7 +90,7 @@ const DoctorDashboard = () => {
       }
 
       const response = await axios.patch(
-        `http://localhost:5000/api/appointments/${appointmentId}/status`,
+        `${API_URL}/api/appointments/${appointmentId}/status`,
         { status },
         { 
           headers: { 
@@ -147,7 +148,7 @@ const DoctorDashboard = () => {
 
       console.log('Making request to add health record...');
       const response = await axios.post(
-        'http://localhost:5000/api/health-records',
+        `${API_URL}/api/health-records`,
         {
           patientId: newRecord.patientId,
           diagnosis: newRecord.diagnosis,
@@ -359,4 +360,4 @@ const DoctorDashboard = () => {
   );
 };
 
-export default DoctorDashboard; 
+export default DoctorDashboard;

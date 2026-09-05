@@ -20,21 +20,39 @@ A web application for managing health records with separate portals for doctors 
 ## Setup
 
 1. Clone the repository
-2. Install dependencies:
+2. Install backend and frontend dependencies:
    ```bash
    npm install
+   cd client
+   npm install
+   cd ..
    ```
 
-3. Create a PostgreSQL database named 'health_records'
+3. Start the included PostgreSQL database with Docker Desktop:
+   ```bash
+   npm run db:start
+   ```
+
+   Alternatively, create a PostgreSQL database named `health_records` using
+   the credentials configured in `.env`.
 
 4. Configure environment variables:
    - Copy `.env.example` to `.env`
    - Update the database credentials and JWT secret in `.env`
 
-5. Start the server:
+5. Start the API server:
    ```bash
    npm run dev
    ```
+
+6. In a second terminal, start the React client:
+   ```bash
+   cd client
+   npm start
+   ```
+
+The API runs at `http://localhost:5001` and the React client runs at
+`http://localhost:3000` by default.
 
 ## API Endpoints
 
@@ -62,4 +80,4 @@ A web application for managing health records with separate portals for doctors 
 
 ## Frontend
 
-The frontend is built with React and will be available in a separate repository. 
+The React frontend is included in the `client` directory.

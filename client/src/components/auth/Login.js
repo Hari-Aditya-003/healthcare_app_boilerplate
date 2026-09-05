@@ -10,11 +10,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Link,
   Divider,
 } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +31,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const response = await axios.post(`${API_URL}/api/auth/login`, formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userType', formData.userType);
       navigate(`/${formData.userType}/dashboard`);
@@ -158,4 +158,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

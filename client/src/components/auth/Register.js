@@ -15,6 +15,7 @@ import {
   Divider,
 } from '@mui/material';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -116,7 +117,7 @@ const Register = () => {
         password: '***'
       });
 
-      const response = await axios.post('http://localhost:5000/api/auth/register', dataToSend, {
+      const response = await axios.post(`${API_URL}/api/auth/register`, dataToSend, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -305,4 +306,4 @@ const Register = () => {
   );
 };
 
-export default Register; 
+export default Register;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -27,6 +27,7 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 const PatientDashboard = () => {
   const [appointments, setAppointments] = useState([]);
@@ -39,21 +40,15 @@ const PatientDashboard = () => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('PatientDashboard mounted');
-    fetchData();
-    fetchDoctors();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       console.log('Fetching appointments and records with token:', token ? 'Present' : 'Missing');
       const [appointmentsRes, recordsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/appointments/my-appointments', {
+        axios.get(`${API_URL}/api/appointments/my-appointments`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:5000/api/health-records/my-records', {
+        axios.get(`${API_URL}/api/health-records/my-records`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -64,9 +59,9 @@ const PatientDashboard = () => {
       console.error('Error fetching data:', error);
       alert('Error fetching data. Please try again.');
     }
-  };
+  }, []);
 
-  const fetchDoctors = async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       console.log('\n=== Fetching Doctors List ===');
@@ -82,8 +77,8 @@ const PatientDashboard = () => {
       // First, test if the server is running using fetch
       console.log('Testing server connection...');
       try {
-        console.log('Making test request to http://localhost:5000/test');
-        const testResponse = await fetch('http://localhost:5000/test', {
+        console.log(`Making test request to ${API_URL}/test`);
+        const testResponse = await fetch(`${API_URL}/test`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -109,7 +104,7 @@ const PatientDashboard = () => {
         
         if (testError.message.includes('Failed to fetch')) {
           console.error('Connection failed - server might be down or CORS issue');
-          alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+          alert(`Cannot connect to the API at ${API_URL}. Please make sure the server is running.`);
         } else {
           alert('Cannot connect to server. Please try again later.');
         }
@@ -124,7 +119,7 @@ const PatientDashboard = () => {
         'Accept': 'application/json'
       });
 
-      const response = await fetch('http://localhost:5000/api/users/doctors', {
+      const response = await fetch(`${API_URL}/api/users/doctors`, {
         method: 'GET',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -161,7 +156,7 @@ const PatientDashboard = () => {
       
       if (error.message.includes('Failed to fetch')) {
         console.error('Connection failed - server might be down or CORS issue');
-        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+        alert(`Cannot connect to the API at ${API_URL}. Please make sure the server is running.`);
       } else if (error.message.includes('401')) {
         console.log('Unauthorized - redirecting to login');
         navigate('/login');
@@ -169,7 +164,13 @@ const PatientDashboard = () => {
         alert('Error fetching doctors list. Please try again.');
       }
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    console.log('PatientDashboard mounted');
+    fetchData();
+    fetchDoctors();
+  }, [fetchData, fetchDoctors]);
 
   const handleBookAppointment = async () => {
     try {
@@ -181,7 +182,7 @@ const PatientDashboard = () => {
       const token = localStorage.getItem('token');
       console.log('Booking appointment with data:', { ...newAppointment, token: token ? 'Present' : 'Missing' });
       await axios.post(
-        'http://localhost:5000/api/appointments/book',
+        `${API_URL}/api/appointments/book`,
         newAppointment,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -332,4 +333,4 @@ const PatientDashboard = () => {
   );
 };
 
-export default PatientDashboard; 
+export default PatientDashboard;

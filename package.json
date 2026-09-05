@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "db:start": "docker compose up -d database",
+    "db:stop": "docker compose stop database"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
